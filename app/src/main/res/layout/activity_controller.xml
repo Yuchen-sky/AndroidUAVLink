@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="103dp"
+            android:text="无人机控制"
+            android:textSize="30dp" />
+
+        <Button
+            android:id="@+id/controller_button_L_UP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/controller_button_L_EN"
+            android:layout_marginStart="67dp"
+            android:layout_marginTop="23dp"
+            android:text="L_Up"
+            tools:layout_editor_absoluteX="59dp"
+            tools:layout_editor_absoluteY="231dp" />
+
+        <Button
+            android:id="@+id/controller_button_L_DOWN"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/controller_button_L_UP"
+            android:layout_below="@+id/controller_button_L_RIGHT"
+            android:layout_marginStart="-4dp"
+            android:layout_marginTop="0dp"
+            android:text="L_Down"
+            tools:layout_editor_absoluteX="66dp"
+            tools:layout_editor_absoluteY="328dp" />
+
+        <Button
+            android:id="@+id/controller_button_L_LEFT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/controller_button_L_UP"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="1dp"
+            android:text="L_Left"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="279dp" />
+
+        <Button
+            android:id="@+id/controller_button_L_RIGHT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/controller_button_L_LEFT"
+            android:layout_marginStart="111dp"
+            android:layout_marginTop="0dp"
+            android:text="L_Right"
+            tools:layout_editor_absoluteX="104dp"
+            tools:layout_editor_absoluteY="280dp" />
+
+        <Button
+            android:id="@+id/controller_button_R_DOWN"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/controller_button_R_UP"
+            android:layout_alignTop="@+id/controller_button_L_DOWN"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="1dp"
+            android:text="R_DOWN" />
+
+        <Button
+            android:id="@+id/controller_button_L_EN"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textView3"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="50dp"
+            android:background="@color/ButtonBlue"
+            android:text="Enable"
+            android:textColor="@color/colorWhite" />
+
+        <Button
+            android:id="@+id/controller_button_R_LEFT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/controller_button_L_DOWN"
+            android:layout_marginEnd="97dp"
+            android:layout_marginTop="-50dp"
+            android:text="R_LEFT" />
+
+        <Button
+            android:id="@+id/controller_button_R_UP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/controller_button_L_UP"
+            android:layout_marginEnd="53dp"
+            android:layout_marginTop="3dp"
+            android:text="R_UP" />
+
+        <Button
+            android:id="@+id/controller_button_R_RIGHT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/controller_button_R_DOWN"
+            android:layout_alignStart="@+id/controller_button_R_LEFT"
+            android:layout_below="@+id/controller_button_R_UP"
+            android:layout_marginBottom="4dp"
+            android:layout_marginStart="88dp"
+            android:layout_marginTop="1dp"
+            android:text="R_RIGHT" />
+
+        <Button
+            android:id="@+id/controller_button_TAKEOFF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textView3"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="149dp"
+            android:layout_marginTop="50dp"
+            android:background="@color/ButtonBlue"
+            android:text="起飞"
+            android:textColor="@color/colorWhite" />
+
+        <Button
+            android:id="@+id/controller_button_LAND"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/textView3"
+            android:layout_marginEnd="40dp"
+            android:layout_marginTop="50dp"
+            android:background="@color/ButtonBlue"
+            android:text="降落"
+            android:textColor="@color/colorWhite" />
+
+        <Button
+            android:id="@+id/controller_button_Camera_UP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/controller_button_L_RIGHT"
+            android:layout_marginEnd="3dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="36dp"
+            android:layout_toEndOf="@+id/controller_button_L_DOWN"
+            android:layout_toStartOf="@+id/controller_button_R_DOWN"
+            android:text="C_UP" />
+
+        <Button
+            android:id="@+id/controller_button_Camera_LEFT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/controller_button_Camera_RIGHT"
+            android:layout_marginEnd="3dp"
+            android:layout_marginTop="0dp"
+            android:layout_toStartOf="@+id/controller_button_Camera_UP"
+            android:text="C_LEFT" />
+
+        <Button
+            android:id="@+id/controller_button_Camera_DOWN"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/controller_button_Camera_UP"
+            android:layout_toEndOf="@+id/controller_button_L_DOWN"
+            android:text="C_DOWN" />
+
+        <Button
+            android:id="@+id/controller_button_Camera_RIGHT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/controller_button_R_DOWN"
+            android:layout_marginStart="-1dp"
+            android:layout_marginTop="13dp"
+            android:layout_toEndOf="@+id/controller_button_Camera_UP"
+            android:text="C_RIGHT" />
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

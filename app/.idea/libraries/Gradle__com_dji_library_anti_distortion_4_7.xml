@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: com.dji:library-anti-distortion-4.7">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/library-anti-distortion-4.7.aar/1dd4d50564793c0d2d689a55be4760e5/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/library-anti-distortion-4.7.aar/1dd4d50564793c0d2d689a55be4760e5/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
