@@ -1,4 +1,4 @@
-package com.dji.videostreamdecodingsample.media;
+package com.example.luyuchen.getnetwork.media;
 
 /**
  *  A helper class to invoke native methods

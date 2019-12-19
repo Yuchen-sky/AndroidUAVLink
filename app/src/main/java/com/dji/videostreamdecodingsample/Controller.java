@@ -1,4 +1,4 @@
-package com.dji.videostreamdecodingsample;
+package com.example.luyuchen.getnetwork;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -29,7 +29,6 @@ import dji.sdk.gimbal.Gimbal;
 import dji.sdk.products.Aircraft;
 
 
-
 public class Controller extends Activity implements View.OnClickListener {
 
     private static final String TAG = Controller.class.getSimpleName();
@@ -46,13 +45,11 @@ public class Controller extends Activity implements View.OnClickListener {
     private float gRoll;
     private float gYaw;
 
-    private volatile float mPitch;
-    private volatile float mRoll;
-    private volatile float mYaw;
-    private volatile float mThrottle;
-
-    //控制信号
-    public Handler mainHandler = new Handler(Looper.getMainLooper()) {//显示消息
+    private float mPitch;
+    private float mRoll;
+    private float mYaw;
+    private float mThrottle;
+    public Handler mainHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -83,18 +80,16 @@ public class Controller extends Activity implements View.OnClickListener {
         mRoll = 0;
         mThrottle = 0;
         gPitch = 0;
-        initUI();//这个可以看
+        initUI();
     }
 
     @Override
-    public void onResume() {//停止后继续，需要初始化
+    public void onResume() {
         Log.e(TAG, "onResume");
         super.onResume();
         initFlightController();
     }
 
-    //----------------------------------------------------------------------------------
-    //初始化控制
     private void initFlightController() {
         Aircraft aircraft = (Aircraft) VideoDecodingApplication.getProductInstance();
         if (aircraft == null || !aircraft.isConnected()) {
@@ -103,12 +98,12 @@ public class Controller extends Activity implements View.OnClickListener {
             mGimbal = null;
             return;
         } else {
-            mFlightController = aircraft.getFlightController();//输入控制信号
+            mFlightController = aircraft.getFlightController();
             mFlightController.setRollPitchControlMode(RollPitchControlMode.VELOCITY);
             mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
             mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
             mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
-            mFlightController.getSimulator().setStateCallback(new SimulatorState.Callback() {//仿真器
+            mFlightController.getSimulator().setStateCallback(new SimulatorState.Callback() {
                 @Override
                 public void onUpdate(final SimulatorState stateData) {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -137,10 +132,9 @@ public class Controller extends Activity implements View.OnClickListener {
     }
 
 
-    //----------------------------------------------------------------------------------
-    //按键自定义内容
+
     @Override
-    public void onClick(View v){//按钮集体定义
+    public void onClick(View v){
         switch (v.getId()){
             case R.id.controller_button_L_EN:{
                 if(btn_enable.isSelected()){
@@ -186,15 +180,14 @@ public class Controller extends Activity implements View.OnClickListener {
 
                         //定时器用来定时，200ms发送一次数据
                         if (null == mSendVirtualStickDataTimer) {
-                            showToast("redo mSendVirtualStickDataTimer");
                             mSendVirtualStickDataTask = new SendVirtualStickDataTask();
                             mSendVirtualStickDataTimer = new Timer();
-                            mSendVirtualStickDataTimer.schedule(mSendVirtualStickDataTask, 100, 100);
+                            mSendVirtualStickDataTimer.schedule(mSendVirtualStickDataTask, 100, 200);
                         }
                         if (mSendGimbalDataTimer == null) {
                             mSendGimbalDataTimer= new Timer();
                             mSendGimbalDataTask = new SendGimbalDataTask();
-                            mSendGimbalDataTimer.schedule(mSendGimbalDataTask, 100, 100);
+                            mSendGimbalDataTimer.schedule(mSendGimbalDataTask, 100, 200);
                         }
 
                     }
@@ -246,16 +239,14 @@ public class Controller extends Activity implements View.OnClickListener {
                 mYaw = 0;
                 mPitch = 0;
                 mRoll = 0;
-                mThrottle+=0.2;
-                showToast("高度"+mThrottle);
+                mThrottle++;
 
                 break;
             case R.id.controller_button_L_DOWN:
                 mYaw = 0;
                 mPitch = 0;
                 mRoll = 0;
-                mThrottle-=0.2;
-                showToast("高度"+mThrottle);
+                mThrottle--;
 
                 break;
             case R.id.controller_button_L_RIGHT:
@@ -263,44 +254,38 @@ public class Controller extends Activity implements View.OnClickListener {
                 mPitch = 0;
                 mRoll = 0;
                 mThrottle = 0;
-                showToast("转角"+mYaw);
                 break;
             case R.id.controller_button_L_LEFT:
                 mYaw--;
                 mPitch = 0;
                 mRoll = 0;
                 mThrottle = 0;
-                showToast("转角"+mYaw);
                 break;
             case R.id.controller_button_R_UP:
                 mYaw = 0;
                 mPitch = 0;
-                mRoll+=0.2;
+                mRoll++;
                 mThrottle = 0;
-                showToast("侧倾"+mRoll);
                 break;
 
             case R.id.controller_button_R_DOWN:
                 mYaw = 0;
                 mPitch = 0;
-                mRoll-=0.2;
+                mRoll--;
                 mThrottle = 0;
-                showToast("侧倾"+mRoll);
                 break;
 
             case R.id.controller_button_R_LEFT:
                 mYaw = 0;
-                mPitch-=0.2;
+                mPitch--;
                 mRoll = 0;
                 mThrottle = 0;
-                showToast("前后倾"+mPitch);
                 break;
             case R.id.controller_button_R_RIGHT:
                 mYaw = 0;
-                mPitch+=0.2;
+                mPitch++;
                 mRoll = 0;
                 mThrottle = 0;
-                showToast("前后倾"+mPitch);
                 break;
                 // 云台控制
             case R.id.controller_button_Camera_UP:
@@ -325,24 +310,17 @@ public class Controller extends Activity implements View.OnClickListener {
 
         }
     }
-
-    //----------------------------------------------------------------------------------
-    //展示信息
     private void showToast(String s) {
         mainHandler.sendMessage(
                 mainHandler.obtainMessage(MSG_WHAT_SHOW_TOAST, s)
         );
     }
 
-
-
-
-    //----------------------------------------------------------------------------------
-    //元素绑定
     private Button btn_enable;
     private Button btn_L_up,btn_L_down,btn_L_right,btn_L_left;
     private Button btn_R_up,btn_R_down,btn_R_right,btn_R_left;
     private Button btn_takeoff,btn_landing;
+
     private void initUI() {
         btn_enable =(Button)findViewById(R.id.controller_button_L_EN);
         btn_enable.setOnClickListener(this);
@@ -393,9 +371,6 @@ public class Controller extends Activity implements View.OnClickListener {
 
     }
 
-
-    //----------------------------------------------------------------------------------
-    //两个传数
     class SendVirtualStickDataTask extends TimerTask {
         //作为指令格式发送给无人机
         //Pitch:前后翻动
@@ -418,6 +393,7 @@ public class Controller extends Activity implements View.OnClickListener {
             }
         }
     }
+
     class SendGimbalDataTask extends TimerTask{
         @Override
         public void run() {

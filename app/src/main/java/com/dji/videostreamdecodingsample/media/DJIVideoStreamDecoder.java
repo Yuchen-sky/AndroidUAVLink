@@ -1,4 +1,4 @@
-package com.dji.videostreamdecodingsample.media;
+package com.example.luyuchen.getnetwork.media;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -13,13 +13,8 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.Surface;
 
-import com.dji.videostreamdecodingsample.R;
-import dji.common.product.Model;
-import dji.log.DJILog;
-import dji.midware.data.model.P3.DataCameraGetPushStateInfo;
-import dji.sdk.codec.DJICodecManager;
-import dji.sdk.products.Aircraft;
-import dji.sdk.sdkmanager.DJISDKManager;
+import com.example.luyuchen.getnetwork.R;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -27,7 +22,13 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import dji.common.product.Model;
+import dji.log.DJILog;
+import dji.midware.data.model.P3.DataCameraGetPushStateInfo;
 import dji.sdk.base.BaseProduct;
+import dji.sdk.codec.DJICodecManager;
+import dji.sdk.products.Aircraft;
+import dji.sdk.sdkmanager.DJISDKManager;
 
 /**
  * This class is a helper class for hardware decoding. Please follow the following steps to use it:
