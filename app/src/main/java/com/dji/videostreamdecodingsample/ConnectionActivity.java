@@ -1,4 +1,4 @@
-package com.example.luyuchen.getnetwork;
+package com.dji.videostreamdecodingsample;
 
 import android.Manifest;
 import android.app.Activity;
@@ -16,9 +16,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -37,9 +41,16 @@ import dji.sdk.base.BaseProduct;
 import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
 import dji.sdk.useraccount.UserAccountManager;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 public class ConnectionActivity extends Activity implements View.OnClickListener {
+
+    static String HOSTURL = "http://192.168.1.23:5000/";
 
     private static final String TAG = MainActivity.class.getName();
     private static final String[] REQUIRED_PERMISSION_LIST = new String[]{
@@ -71,9 +82,106 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
     private DJIKey firmkey = ProductKey.create(ProductKey.FIRMWARE_PACKAGE_VERSION);
     private AtomicBoolean isRegistrationInProgress = new AtomicBoolean(false);
     private List<String> missingPermission = new ArrayList<>();
+    private EditText editTextUrl;
+    private Button okurl;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        checkAndRequestPermissions();
+        setContentView(R.layout.activity_connection);
+        TestHttpConnent();
+        initUI();
+    }
+
+    @Override
+    public void onResume() {
+        Log.e(TAG, "onResume");
+        super.onResume();
+        updateTitleBar();
+    }
 
 
-    //region Registration n' Permissions Helpers
+    public void TestHttpConnent() {
+        Gson gson  = new Gson();
+        final String address =HOSTURL;
+
+        OkHttpClient client = new OkHttpClient();
+        showToast("control send");
+        Request request = new Request.Builder()
+                .url(address)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                showToast("connent http server fail");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                //得到服务器返回的具体内容
+                String responseData=response.body().string();
+                //ContrlData control = son.fromJson(responseData, ContrlData.class);
+                showToast("connent http server success");
+            }
+        });
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.e(TAG, "onDestroy");
+        if (KeyManager.getInstance() != null) {
+            KeyManager.getInstance().removeListener(firmVersionListener);
+        }
+        super.onDestroy();
+    }
+
+    private void initUI() {
+
+        mTextConnectionStatus = (TextView) findViewById(R.id.text_connection_status);
+        mTextModelAvailable = (TextView) findViewById(R.id.text_model_available);
+        mTextProduct = (TextView) findViewById(R.id.text_product_info);
+        mBtnOpen = (Button) findViewById(R.id.btn_open);
+        mBtnOpen.setOnClickListener(this);
+        mBtnOpen.setEnabled(false);
+        ((TextView)findViewById(R.id.textView2)).setText(getResources().getString(R.string.sdk_version, DJISDKManager.getInstance().getSDKVersion()));
+
+        okurl = (Button) findViewById(R.id.Okurl);
+        okurl.setOnClickListener(this);
+        editTextUrl = (EditText) findViewById(R.id.UrlEditText);
+    }
+
+    public void showToast(final String msg) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(ConnectionActivity.this, msg, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+
+            case R.id.btn_open: {
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra("HOSTURL",HOSTURL);
+                startActivity(intent);
+                break;
+            }
+            case R.id.Okurl: {
+                String inputText = editTextUrl.getText().toString();
+                HOSTURL = "http://192.168.1." + inputText + ":5000/";
+                TestHttpConnent();
+            }
+            default:
+                break;
+        }
+    }
+
+    // 注册key 检查权限 登录登出 连接状态检查更新
 
     /**
      * Checks if there is any missing permissions, and
@@ -97,6 +205,31 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
 
     }
 
+    /**
+     * Result of runtime permission request
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Check for granted permission and remove from missing list
+        if (requestCode == REQUEST_PERMISSION_CODE) {
+            for (int i = grantResults.length - 1; i >= 0; i--) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    missingPermission.remove(permissions[i]);
+                }
+            }
+        }
+        // If there is enough permission, we will start the registration
+        if (missingPermission.isEmpty()) {
+            startSDKRegistration();
+        } else {
+            Toast.makeText(getApplicationContext(), "Missing permissions!!!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // 注册sdk,对齐key
     private void startSDKRegistration() {
         if (isRegistrationInProgress.compareAndSet(false, true)) {
             AsyncTask.execute(new Runnable() {
@@ -159,6 +292,7 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
         }
     }
 
+    // 登录账户
     private void loginDJIUserAccount() {
 
         UserAccountManager.getInstance().logIntoDJIUserAccount(this,
@@ -167,15 +301,29 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
                     public void onSuccess(final UserAccountState userAccountState) {
                         showToast("login success! Account state is:" +userAccountState.name());
                     }
-
                     @Override
                     public void onFailure(DJIError error) {
                         showToast(error.getDescription());
                     }
                 });
-
     }
 
+    // 登出账户
+    private void logoutAccount(){
+        UserAccountManager.getInstance().logoutOfDJIUserAccount(new CommonCallbacks.CompletionCallback() {
+            @Override
+            public void onResult(DJIError error) {
+                if (null == error) {
+                    showToast("Logout Success");
+                } else {
+                    showToast("Logout Error:"
+                            + error.getDescription());
+                }
+            }
+        });
+    }
+
+    //状态变化/hjgjkhgklj
     private void notifyStatusChange() {
         runOnUiThread(new Runnable() {
             @Override
@@ -183,134 +331,7 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
                 refreshSDKRelativeUI();
             }
         });
-
-    }
-
-    //endregion
-
-    /**
-     * Result of runtime permission request
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // Check for granted permission and remove from missing list
-        if (requestCode == REQUEST_PERMISSION_CODE) {
-            for (int i = grantResults.length - 1; i >= 0; i--) {
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    missingPermission.remove(permissions[i]);
-                }
-            }
-        }
-        // If there is enough permission, we will start the registration
-        if (missingPermission.isEmpty()) {
-            startSDKRegistration();
-        } else {
-            Toast.makeText(getApplicationContext(), "Missing permissions!!!", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        checkAndRequestPermissions();
-        setContentView(R.layout.activity_connection);
-        initUI();
-    }
-
-    @Override
-    public void onResume() {
-        Log.e(TAG, "onResume");
-        super.onResume();
-        updateTitleBar();
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.e(TAG, "onDestroy");
-        if (KeyManager.getInstance() != null) {
-            KeyManager.getInstance().removeListener(firmVersionListener);
-        }
-        super.onDestroy();
-    }
-
-    private void initUI() {
-
-        mTextConnectionStatus = (TextView) findViewById(R.id.text_connection_status);
-        mTextModelAvailable = (TextView) findViewById(R.id.text_model_available);
-        mTextProduct = (TextView) findViewById(R.id.text_product_info);
-        mBtnOpen = (Button) findViewById(R.id.btn_open);
-        mBtnOpen.setOnClickListener(this);
-        mBtnOpen.setEnabled(false);
-        ((TextView)findViewById(R.id.textView2)).setText(getResources().getString(R.string.sdk_version, DJISDKManager.getInstance().getSDKVersion()));
-    }
-
-    private void updateTitleBar() {
-        boolean ret = false;
-        BaseProduct product = VideoDecodingApplication.getProductInstance();
-        if (product != null) {
-            if (product.isConnected()) {
-                //The product is connected
-                showToast(VideoDecodingApplication.getProductInstance().getModel() + " Connected");
-                ret = true;
-            } else {
-                if (product instanceof Aircraft) {
-                    Aircraft aircraft = (Aircraft) product;
-                    if (aircraft.getRemoteController() != null && aircraft.getRemoteController().isConnected()) {
-                        // The product is not connected, but the remote controller is connected
-                        showToast("only RC Connected");
-                        ret = true;
-                    }
-                }
-            }
-        }
-
-        if (!ret) {
-            // The product or the remote controller are not connected.
-            showToast("Disconnected");
-        }
-    }
-
-    public void showToast(final String msg) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(ConnectionActivity.this, msg, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void updateVersion() {
-
-        if (VideoDecodingApplication.getProductInstance() != null) {
-            final String version = VideoDecodingApplication.getProductInstance().getFirmwarePackageVersion();
-            this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (TextUtils.isEmpty(version)) {
-                        mTextModelAvailable.setText("N/A"); //Firmware version:
-                    } else {
-                        mTextModelAvailable.setText(version); //"Firmware version: " +
-                    }
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-
-            case R.id.btn_open: {
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                break;
-            }
-            default:
-                break;
-        }
+        System.out.print("dsafsa");
     }
 
     private void refreshSDKRelativeUI() {
@@ -341,6 +362,52 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
             mTextConnectionStatus.setText(R.string.connection_loose);
         }
     }
+
+    //是否成功获取数据类
+    private void updateTitleBar() {
+        boolean ret = false;
+        BaseProduct product = VideoDecodingApplication.getProductInstance();
+        if (product != null) {
+            if (product.isConnected()) {
+                //The product is connected
+                showToast(VideoDecodingApplication.getProductInstance().getModel() + " Connected");
+                ret = true;
+            } else {
+                if (product instanceof Aircraft) {
+                    Aircraft aircraft = (Aircraft) product;
+                    if (aircraft.getRemoteController() != null && aircraft.getRemoteController().isConnected()) {
+                        // The product is not connected, but the remote controller is connected
+                        showToast("only RC Connected");
+                        ret = true;
+                    }
+                }
+            }
+        }
+
+        if (!ret) {
+            // The product or the remote controller are not connected.
+            showToast("Disconnected");
+        }
+    }
+
+    private void updateVersion() {
+
+        if (VideoDecodingApplication.getProductInstance() != null) {
+            final String version = VideoDecodingApplication.getProductInstance().getFirmwarePackageVersion();
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (TextUtils.isEmpty(version)) {
+                        mTextModelAvailable.setText("N/A"); //Firmware version:
+                    } else {
+                        mTextModelAvailable.setText(version); //"Firmware version: " +
+                    }
+                }
+            });
+        }
+    }
+
+    /**
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -350,5 +417,5 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
             attachedIntent.setAction(DJISDKManager.USB_ACCESSORY_ATTACHED);
             sendBroadcast(attachedIntent);
         }
-    }
+    }**/
 }

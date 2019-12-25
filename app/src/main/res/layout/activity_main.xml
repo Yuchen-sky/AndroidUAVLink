@@ -113,5 +113,31 @@
         android:scrollbars="vertical"
         android:gravity="bottom"
         />
+<!--
+    <Button
+        android:id="@+id/enablecontrol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="51dp"
+        android:text="Button" />
 
+    <Button
+        android:id="@+id/takeoff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/enablecontrol"
+        android:layout_toStartOf="@+id/enablecontrol"
+        android:text="Button" />
+
+    <Button
+        android:id="@+id/down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/enablecontrol"
+        android:layout_toStartOf="@+id/takeoff"
+        android:text="Button" />
+-->
 </RelativeLayout>

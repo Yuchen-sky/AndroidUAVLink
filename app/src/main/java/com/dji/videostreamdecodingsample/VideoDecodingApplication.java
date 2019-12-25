@@ -1,4 +1,4 @@
-package com.example.luyuchen.getnetwork;
+package com.dji.videostreamdecodingsample;
 
 import android.app.Application;
 import android.content.Context;
@@ -6,6 +6,9 @@ import android.content.Context;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.sdkmanager.DJISDKManager;
 
+
+//----------------------------------------------------------------------------------
+//基础应用 单例模式
 public class VideoDecodingApplication extends Application {
 
     private static BaseProduct mProduct;
@@ -25,5 +28,5 @@ public class VideoDecodingApplication extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         com.secneo.sdk.Helper.install(VideoDecodingApplication.this);
-    }
+   }
 }
